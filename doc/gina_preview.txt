@@ -1,0 +1,28 @@
+gina_preview.txt	
+
+Author: kuuote <znmxodq1@gmail.com>
+License: zlib License
+
+==============================================================================
+INTRODUCTION					*gina-preview-introduction*
+
+*gina-preview* is |gina.vim| helper
+it shows |:Gina-status| with preview using |:Gina-patch|
+
+==============================================================================
+USAGE 						*gina-preview-usage*
+
+						*:GinaPreview*
+:GinaPreview[!]
+	Show status tab.
+	If "!" was given, using current window.
+
+==============================================================================
+OPTION						*gina-preview-option*
+
+						*g:gina_preview_oneside*
+	If 1, using `--oneside` option 
+	Default: 1
+	
+
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
