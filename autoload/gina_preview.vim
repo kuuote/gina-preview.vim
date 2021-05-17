@@ -15,7 +15,9 @@ endfunction
 function! s:on(scheme) abort
   let is_vertical = &diffopt =~# "vertical"
 
-  if a:scheme ==# "patch"
+  if !get(t:, "gina_preview", 0)
+    return
+  elseif a:scheme ==# "patch"
     call win_gotoid(t:winid_gina)
     if is_vertical
       execute "resize" &lines / 3
@@ -24,8 +26,6 @@ function! s:on(scheme) abort
     endif
     return
   elseif a:scheme !=# "status"
-    return
-  elseif !get(t:, "gina_preview", 0)
     return
   endif
 
