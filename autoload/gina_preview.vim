@@ -13,20 +13,29 @@ function! s:status() abort
 endfunction
 
 function! s:on(scheme) abort
+  let is_vertical = &diffopt =~# "vertical"
+
   if a:scheme ==# "patch"
     call win_gotoid(t:winid_gina)
-    execute "vertical resize" &columns / 3
+    if is_vertical
+      execute "resize" &lines / 3
+    else
+      execute "vertical resize" &columns / 3
+    endif
     return
   elseif a:scheme !=# "status"
     return
   elseif !get(t:, "gina_preview", 0)
     return
   endif
+
   call win_gotoid(t:winid_gina)
   silent! only
   let l = substitute(getline("."), "\<Esc>[^m]\\+m", "", "g")
   let file = l[3:]
-  silent! execute "Gina patch --opener=vsplit" g:gina_preview_oneside ? "--oneside" : "" file
+  let opener = "--opener=" .. (is_vertical ? "split" : "vsplit")
+  let oneside = g:gina_preview_oneside ? "--oneside" : ""
+  silent! execute "Gina patch" opener oneside file
 endfunction
 
 function! gina_preview#open(usetab) abort
