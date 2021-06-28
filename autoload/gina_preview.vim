@@ -12,19 +12,23 @@ function! s:status() abort
   endif
 endfunction
 
+function! s:gotowin(is_vertical) abort
+  call win_gotoid(t:winid_gina)
+  if a:is_vertical
+    execute "resize" &lines / 3
+  else
+    execute "vertical resize" &columns / 3
+  endif
+  
+endfunction
+
 function! s:on(scheme) abort
   let is_vertical = &diffopt =~# "vertical"
 
   if !get(t:, "gina_preview", 0)
     return
   elseif a:scheme ==# "patch"
-    call win_gotoid(t:winid_gina)
-    if is_vertical
-      execute "resize" &lines / 3
-    else
-      execute "vertical resize" &columns / 3
-    endif
-    return
+    return s:gotowin(is_vertical)
   elseif a:scheme !=# "status"
     return
   endif
@@ -32,15 +36,22 @@ function! s:on(scheme) abort
   call win_gotoid(t:winid_gina)
   silent! only
   let l = substitute(getline("."), "\<Esc>[^m]\\+m", "", "g")
+  let type = l[0:2]
   let file = l[3:]
-  let opener = "--opener=" .. (is_vertical ? "split" : "vsplit")
-  let oneside = g:gina_preview_oneside ? "--oneside" : ""
-  silent! execute "Gina patch" opener oneside file
+  let opener = is_vertical ? "split" : "vsplit"
+  if type =~# "?"
+    execute "keepalt rightbelow" opener file
+    return s:gotowin(is_vertical)
+  else
+    let opener_opt = "--opener=" .. opener
+    let oneside = g:gina_preview_oneside ? "--oneside" : ""
+    silent! execute "Gina patch" opener_opt oneside file
+  endif
 endfunction
 
 function! gina_preview#open(usetab) abort
   if a:usetab
-    tab split
+    keepalt tab split
   endif
   let t:gina_preview = 1
   call s:status()
