@@ -49,6 +49,15 @@ function! s:on(scheme) abort
   endif
 endfunction
 
+function! s:cursor_moved() abort
+  let oldline = get(b:, 'gina_preview_cursor', -1)
+  let curline = line('.')
+  if oldline != curline
+    let b:gina_preview_cursor = curline
+    call s:on('status')
+  endif
+endfunction
+
 function! gina_preview#open(usetab) abort
   if a:usetab
     keepalt tab split
@@ -57,8 +66,7 @@ function! gina_preview#open(usetab) abort
   call s:status()
   let t:winid_gina = win_getid()
 
-  nnoremap <buffer> j j:call <SID>on("status")<CR>
-  nnoremap <buffer> k k:call <SID>on("status")<CR>
+  autocmd CursorMoved <buffer> ++nested call s:cursor_moved()
   " autocmd CursorMoved <buffer> call s:on("status")
   if !s:subscribed
     call gina#core#emitter#subscribe("command:called", function("s:on"))
