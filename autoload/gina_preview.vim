@@ -61,15 +61,18 @@ function! s:on(scheme) abort
   if !get(t:, "gina_preview", 0)
     return
   elseif a:scheme ==# "patch"
-    call s:gotowin(v:false)
+    " call s:gotowin(v:false)
   elseif a:scheme ==# "status"
-    echomsg 'status'
+    augroup gina-preview
+      autocmd!
+      autocmd CursorMoved <buffer> ++nested call s:cursor_moved()
+    augroup END
     call s:open()
   endif
 endfunction
 
 function! s:cursor_moved() abort
-  let oldline = get(b:, 'gina_preview_cursor', -1)
+  let oldline = get(b:, 'gina_preview_cursor', 1)
   let curline = line('.')
   if oldline != curline
     let b:gina_preview_cursor = curline
@@ -85,7 +88,6 @@ function! gina_preview#open(usetab) abort
   let t:gina_preview = 1
   call s:status()
 
-  autocmd CursorMoved <buffer> ++nested call s:cursor_moved()
   if !s:subscribed
     call gina#core#emitter#subscribe("command:called", function("s:on"))
     let s:subscribed = 1
