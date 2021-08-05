@@ -19,6 +19,8 @@ function! s:gotowin(is_vertical) abort
   else
     execute "vertical resize" &columns / 3
   endif
+  let view = get(b:, 'gina_preview_view', {})
+  call winrestview(view)
   
 endfunction
 
@@ -54,6 +56,7 @@ function! s:cursor_moved() abort
   let curline = line('.')
   if oldline != curline
     let b:gina_preview_cursor = curline
+    let b:gina_preview_view = winsaveview()
     call s:on('status')
   endif
 endfunction
