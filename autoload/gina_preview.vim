@@ -70,7 +70,6 @@ function! gina_preview#open(usetab) abort
   let t:winid_gina = win_getid()
 
   autocmd CursorMoved <buffer> ++nested call s:cursor_moved()
-  " autocmd CursorMoved <buffer> call s:on("status")
   if !s:subscribed
     call gina#core#emitter#subscribe("command:called", function("s:on"))
     let s:subscribed = 1
