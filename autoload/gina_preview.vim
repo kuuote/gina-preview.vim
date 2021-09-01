@@ -41,17 +41,19 @@ function! s:open() abort
   call s:gotowin(v:false)
   silent! only
   let l = substitute(getline("."), "\<Esc>[^m]\\+m", "", "g")
-  let type = l[0:2]
+  let type = l[0:1]
   let file = l[3:]
   let is_vertical = &diffopt =~# "vertical"
   let opener = is_vertical ? "split" : "vsplit"
-  if type =~# "?"
+  if type ==# "??"
     execute "keepalt rightbelow" opener file
     return s:gotowin(v:true)
-  else
+  elseif type =~# '\(\s\|M\)\(\s\|M\)'
     let opener_opt = "--opener=" .. opener
     let oneside = g:gina_preview_oneside ? "--oneside" : ""
     silent! execute "Gina patch" opener_opt oneside file
+  else
+    return
   endif
   
   call s:gotowin(is_vertical)
