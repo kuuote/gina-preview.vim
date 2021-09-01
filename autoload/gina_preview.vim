@@ -56,16 +56,16 @@ function! s:open() abort
     return
   endif
   
-  call s:gotowin(is_vertical)
+  call s:gotowin(v:true)
 endfunction
 
 function! s:on(scheme) abort
   if !get(t:, "gina_preview", 0)
     return
-  elseif a:scheme ==# "patch"
-    call s:gotowin(v:false)
   elseif a:scheme ==# "status"
-    call s:open()
+    " gina.vimのコールバック内でプレビュー表示をするとバグるので
+    " タイマーを挟む
+    call timer_start(0, {id->s:open()})
   endif
 endfunction
 
