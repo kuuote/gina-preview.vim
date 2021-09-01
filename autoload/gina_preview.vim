@@ -26,7 +26,7 @@ function! s:gotowin(resize) abort
     echomsg 'gina-preview: status window is not found'
     return
   endif
-  if a:resize
+  if a:resize && len(gettabinfo(tabpagenr())[0]['windows']) != 1
     if &diffopt =~# "vertical"
       execute "resize" &lines / 3
     else
